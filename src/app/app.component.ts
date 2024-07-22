@@ -96,15 +96,19 @@ export class AppComponent implements OnInit {
 
   // Answer Question
   // https://huggingface.co/distilbert/distilbert-base-cased-distilled-squad
-  historyText = `In a small village, people relied on a well for water.
-  One day, the well dried up, causing panic.
-  The villagers worked together to dig a new well,
-  discovering a fresh water source.
-  This experience taught them the importance of cooperation and perseverance,
-  ensuring the village's survival`;
-  question1 = 'Why did the villagers panic?';
-  question2 = 'What lesson did the villagers learn? ';
-  question3 = 'How did the villagers solve their problem?';
+  // historyText = `In a small village, people relied on a well for water.
+  // One day, the well dried up, causing panic.
+  // The villagers worked together to dig a new well,
+  // discovering a fresh water source.
+  // This experience taught them the importance of cooperation and perseverance,
+  // ensuring the village's survival`;
+  historyText = `This is an automated mechanism which was designed and implemented to prevent changes from being merged into the main (develop) branch when there are failures in the CI build. When the CI build reports failures, the lock will be automatically enabled, and once the CI build succeeds, the lock will be removed.
+When the CI Lock Policy is ON, the mechanism will automatically add a required reviewer group called "Platform-UX-LockApprovers" to all active PRs. Only people that belong to this group has permissions to allow PRs to be merged, and they will only approve PRs that will potentially fix the alpha failures.
+As of today, this is the group of lock approvers:
+When the CI Lock Policy is OFF, the mechanism will make the existing reviewer called "Platform-UX-LockApprovers" no longer required. **IMPORTANT**: please note that this mechanism will NOT remove the reviewer from the PR, you will need to do it manually.`;
+  question1 = 'What triggers the CI lock mechanism to enable or disable the lock?';
+  question2 = 'Who has the authority to approve PRs when the CI Lock Policy is ON? ';
+  question3 = 'What is the role of the "Platform-UX-LockApprovers" group in the CI Lock Policy?';
 
   async answer(option?: number) {
     const context = this.historyText;
@@ -138,8 +142,8 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {
     env.allowLocalModels = false;
-    await this.loadSummarization();
-    // await this.loadQuestionAnswerModel();
+    // await this.loadSummarization();
+    await this.loadQuestionAnswerModel();
     // await this.loadDetectorModel();
     this.status = 'Image Model Ready';
   }
