@@ -14,6 +14,8 @@ export class AppComponent implements OnInit {
   private objectDetector: any;
   private questionAnswer: any;
   private summarization: any;
+  private invoices: any;
+  private documentAnswer: any;
 
   // Speech
   async runSpeechModel() {
@@ -36,7 +38,7 @@ export class AppComponent implements OnInit {
         const image = new Image();
         image.src = this.imageSrc as string;
         image.onload = async() => {
-          this.imageContainer.nativeElement.appendChild(image);
+          // this.imageContainer.nativeElement.appendChild(image);
           await this.detect(image, this.imageContainer.nativeElement);
         };
       };
@@ -45,6 +47,11 @@ export class AppComponent implements OnInit {
   }
 
   async detect(image: HTMLImageElement, container: HTMLElement) {
+    const question = "What is the name bill to?"
+    // [0]answer: jhon smith
+    const res = await this.documentAnswer(image.src, question);
+    console.log(res);
+    return;
     const output = await this.objectDetector(image.src, {
       threshold: 0.5,
       percentage: true,
@@ -107,7 +114,7 @@ When the CI Lock Policy is ON, the mechanism will automatically add a required r
 As of today, this is the group of lock approvers:
 When the CI Lock Policy is OFF, the mechanism will make the existing reviewer called "Platform-UX-LockApprovers" no longer required. **IMPORTANT**: please note that this mechanism will NOT remove the reviewer from the PR, you will need to do it manually.`;
   question1 = 'What triggers the CI lock mechanism to enable or disable the lock?';
-  question2 = 'Who has the authority to approve PRs when the CI Lock Policy is ON? ';
+  question2 = 'Which group has the authority to approve PRs when the CI Lock Policy is ON? ';
   question3 = 'What is the role of the "Platform-UX-LockApprovers" group in the CI Lock Policy?';
 
   async answer(option?: number) {
@@ -120,7 +127,7 @@ When the CI Lock Policy is OFF, the mechanism will make the existing reviewer ca
     } else {
       question = this.question3;
     }
-    const res = await this.questionAnswer(question, context);
+    const res = await this.questionAnswer(question, context, { topk: 3 });
     console.log(res);
   }
 
@@ -140,10 +147,30 @@ When the CI Lock Policy is OFF, the mechanism will make the existing reviewer ca
     console.log(res)
   }
 
+  // invoices
+  // impira/layoutlm-invoices model not detected with transformers.js
+  async loadInvoicesModel() {
+    this.invoices = await pipeline('document-question-answering', 'impira/layoutlm-invoices');
+  }
+
+  async invoiceRes() {
+    const res = await this.invoices();
+    console.log(res);
+  }
+
+  //Document Answer
+  // https://huggingface.co/tasks/document-question-answering
+  async loadDocumentAnswer() {
+    this.documentAnswer = await pipeline('document-question-answering', 'Xenova/donut-base-finetuned-docvqa');
+  }
+  
+
   async ngOnInit() {
-    env.allowLocalModels = false;
+    // env.allowLocalModels = false;
+    await this.loadDocumentAnswer();
+    // await this.loadInvoicesModel();
     // await this.loadSummarization();
-    await this.loadQuestionAnswerModel();
+    // await this.loadQuestionAnswerModel();
     // await this.loadDetectorModel();
     this.status = 'Image Model Ready';
   }
