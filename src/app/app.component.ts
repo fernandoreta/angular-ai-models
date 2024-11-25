@@ -52,30 +52,10 @@ export class AppComponent {
   ];
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    const dialogRef =  this.dialog.open(DialogAnimationsComponent, {
-      width: '400px',
+    this.dialog.open(DialogAnimationsComponent, {
+      width: '600px',
       enterAnimationDuration,
       exitAnimationDuration
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.imagePath = result;
-        this.extractTextFromImage();
-      }
-    });
-  }
-
-  extractTextFromImage(): void {
-    console.log('Extracting Text ⌛️');
-    this.modelService.recognizeText(this.imagePath).pipe(take(1))
-    .subscribe({
-      next: (text: string) => {
-        this.extractedText = text;
-        console.log('Text Extracted Successfully! 🎉');
-        console.log(this.extractedText);
-      },
-      error: (err: any) => console.error('OCR error', err),
-      complete: () => console.log('OCR process complete 🚀'),
     });
   }
   

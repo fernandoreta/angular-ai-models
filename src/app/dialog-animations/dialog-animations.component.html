@@ -1,24 +1,47 @@
-<h1 mat-dialog-title>🤺 Choose your Battle</h1>
-<div mat-dialog-content>
-    <div *ngIf="imagePreview" style="position: relative; display: inline-block; width: 100%;">
-        <img [src]="imagePreview" alt="Preview" style="width: 100%; margin-bottom: 10px;" />
-        <button class="remove" (click)="removeImage()">✖</button>
-      </div>
-    <input type="file" id="imageInput" (change)="onImageSelected($event)" accept="image/*" hidden />
-    <button  mat-stroked-button color="primary">📸 Take Photo</button>
-    <button
-        style="margin: 10px;"
-        mat-stroked-button
-        color="accent"
-        (click)="onSelectImage()">
-        🖼️ Choose From Library
-    </button>
-</div>
-<div mat-dialog-actions align="end">
-    <button *ngIf="imagePreview" mat-button mat-dialog-close (click)="confirmSelection()">
-        🥽 This is the one
-    </button>
-    <button mat-button mat-dialog-close cdkFocusInitial>
-        🔙 Cancel
-    </button>
-</div>
+<div class="dialog-container">
+    <div class="overlay" *ngIf="thinking"></div>
+    
+    <h1 mat-dialog-title>
+        <span *ngIf="!extractedText">🤺 Choose your Battle</span>
+        <span *ngIf="extractedText">✅ Confirm your text</span>
+    </h1>
+    
+    <div mat-dialog-content [class.disabled]="thinking">
+        <div *ngIf="imagePreview" style="position: relative; display: inline-block; width: 100%;">
+            <img [src]="imagePreview" alt="Preview" style="width: 100%; margin-bottom: 10px;" />
+            <button class="remove" (click)="removeImage()">✖</button>
+        </div>
+        <div *ngIf="extractedText">
+            {{ extractedText }}
+        </div>
+    
+        <input type="file" id="imageInput" (change)="onImageSelected($event)" accept="image/*" hidden />
+        <button
+            style="margin-top: 10px; width: 190px;"
+            mat-stroked-button color="primary">
+            📸 Take Photo
+        </button>
+        <button
+            style="margin-top: 10px; width: 190px;"
+            mat-stroked-button
+            color="accent"
+            (click)="onSelectImage()">
+            🖼️ Get From Library
+        </button>
+    </div>
+    
+    <div mat-dialog-actions align="end">
+        <button *ngIf="extractedText" mat-button mat-dialog-close (click)="confirmSelection()">
+            💾 Save
+        </button>
+        <button mat-button mat-dialog-close cdkFocusInitial>
+            🔙 Cancel
+        </button>
+    </div>
+    
+    <!-- Spinner -->
+    <div *ngIf="thinking" class="spinner-container">
+        <mat-spinner></mat-spinner>
+        <p class="spinner-text">Extracting Text</p>
+    </div>
+</div>  

@@ -1,5 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { take } from 'rxjs';
+import { ModelService } from 'src/services/model.service';
 
 @Component({
   selector: 'app-dialog-animations',
@@ -10,13 +12,16 @@ export class DialogAnimationsComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<DialogAnimationsComponent>,
+    private modelService: ModelService,
     @Inject(MAT_DIALOG_DATA) public data: { onSelectImage: () => void }
   ) {}
 
-  imagePreview: string | null = null;
+  imagePreview = '';
+  extractedText = '';
+  thinking = false;
 
   removeImage() {
-    this.imagePreview = null;
+    this.imagePreview = '';
     const fileInput = document.getElementById('imageInput') as HTMLInputElement;
     fileInput.value = '';
   }
@@ -38,18 +43,41 @@ export class DialogAnimationsComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = () => {
         this.imagePreview = reader.result as string;
-        // this.extractTextFromImage();
+        if (this.imagePreview) {
+          this.extractTextFromImage();
+        }
       };
 
       reader.readAsDataURL(file);
     }
   }
 
+  extractTextFromImage(): void {
+    console.log('Extracting Text ⌛️');
+    this.thinking = true;
+    this.modelService.recognizeText(this.imagePreview).pipe(take(1))
+    .subscribe({
+      next: (text: string) => {
+        this.thinking = false;
+        this.extractedText = text;
+        this.imagePreview = '';
+        console.log('Text Extracted Successfully! 🎉');
+        console.log(this.extractedText);
+      },
+      error: (err: any) => console.error('OCR error', err),
+      complete: () => {
+        console.log('OCR process complete 🚀');
+        this.thinking = false;
+      },
+    });
+  }
+
    /**
    * Close the dialog and return the selected image.
    */
    confirmSelection(): void {
-    this.dialogRef.close(this.imagePreview);
+    console.log('confirm');
+    // this.dialogRef.close(this.imagePreview);
   }
 
   ngOnInit(): void {
