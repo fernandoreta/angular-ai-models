@@ -5,23 +5,39 @@ import { IModels } from 'src/interfaces/models.interface';
 import { ModelService } from 'src/services/model.service';
 import { DialogAnimationsComponent } from './dialog-animations/dialog-animations.component';
 import { MatDialog } from '@angular/material/dialog';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  animations: [
+    trigger('fadeInOut', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('300ms ease-in', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [
+        animate('300ms ease-out', style({ opacity: 0 })),
+      ]),
+    ]),
+  ],
 })
 export class AppComponent {
   @ViewChild('imageContainer', { static: false }) imageContainer!: ElementRef;
   title = 'InstaRead';
-  constructor(private modelService: ModelService, public dialog: MatDialog) {}
+
+  constructor(
+    private modelService: ModelService,
+    private dialog: MatDialog
+  ) {}
   
   //Image to text.
   imagePath = 'assets/example.jpg';
   extractedText: string = '';
 
   models: IModels[] = [
-    { title: '🌠 Image to Text', action: () => this.onSelectImage() },
+    { title: '🌠 Image to Text', action: () => this.openDialog('300ms', '300ms') },
     { title: '📒 Resume', action: () => this.resume() },
     { title: '🙋🏽 Questions', action: () => {} },
     { title: '🎙️ Text to Audio', action: () => {} },
@@ -36,46 +52,20 @@ export class AppComponent {
   ];
 
   openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
-    this.dialog.open(DialogAnimationsComponent, {
+    const dialogRef =  this.dialog.open(DialogAnimationsComponent, {
       width: '400px',
       enterAnimationDuration,
-      exitAnimationDuration,
+      exitAnimationDuration
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.imagePath = result;
+        this.extractTextFromImage();
+      }
     });
   }
 
-  /**
-   * Open the dialog image.
-   */
-  onSelectImage(): void {
-    this.openDialog('0ms', '0ms');
-    return;
-    const fileInput = document.getElementById('imageInput') as HTMLInputElement;
-    fileInput.click();
-  }
-
-  /**
-   * Manage the selection image.
-   */
-  onImageSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input?.files && input.files[0]) {
-      const file = input.files[0];
-      const reader = new FileReader();
-
-      reader.onload = () => {
-        this.imagePath = reader.result as string;
-        this.extractTextFromImage();
-      };
-
-      reader.readAsDataURL(file);
-    }
-  }
-
   extractTextFromImage(): void {
-    if (!this.imagePath) {
-      console.error('No image selected');
-      return;
-    }
     console.log('Extracting Text ⌛️');
     this.modelService.recognizeText(this.imagePath).pipe(take(1))
     .subscribe({

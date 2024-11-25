@@ -337,7 +337,6 @@
   </div>
   <h2>InstaRead Options</h2>
   <div class="card-container">
-    <input type="file" id="imageInput" (change)="onImageSelected($event)" accept="image/*" hidden />
     <div *ngFor="let model of models">
       <div (click)="model.action()" class="card" style="cursor: pointer;">
         <span>{{ model.title }}</span>

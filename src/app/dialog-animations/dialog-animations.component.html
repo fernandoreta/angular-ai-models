@@ -1,8 +1,24 @@
 <h1 mat-dialog-title>🤺 Choose your Battle</h1>
 <div mat-dialog-content>
+    <div *ngIf="imagePreview" style="position: relative; display: inline-block; width: 100%;">
+        <img [src]="imagePreview" alt="Preview" style="width: 100%; margin-bottom: 10px;" />
+        <button class="remove" (click)="removeImage()">✖</button>
+      </div>
+    <input type="file" id="imageInput" (change)="onImageSelected($event)" accept="image/*" hidden />
     <button  mat-stroked-button color="primary">📸 Take Photo</button>
-    <button style="margin: 10px;"  mat-stroked-button color="accent">🖼️ Choose From Library</button>
+    <button
+        style="margin: 10px;"
+        mat-stroked-button
+        color="accent"
+        (click)="onSelectImage()">
+        🖼️ Choose From Library
+    </button>
 </div>
 <div mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close cdkFocusInitial>Cancel</button>
+    <button *ngIf="imagePreview" mat-button mat-dialog-close (click)="confirmSelection()">
+        🥽 This is the one
+    </button>
+    <button mat-button mat-dialog-close cdkFocusInitial>
+        🔙 Cancel
+    </button>
 </div>
