@@ -9,7 +9,8 @@ import { animate, style, transition, trigger } from '@angular/animations';
 export enum Modes {
   imageToText = 'imageToText',
   resume = 'resume',
-  questions = 'questions'
+  questions = 'questions',
+  textToAudio = 'textToAudio'
 }
 @Component({
   selector: 'app-root',
@@ -44,7 +45,7 @@ export class AppComponent {
     { title: '🌠 Image to Text', action: () => this.openDialog('300ms', '300ms', Modes.imageToText) },
     { title: '📒 Resume', action: () => this.openDialog('300ms', '300ms', Modes.resume) },
     { title: '🙋🏽 Questions', action: () => this.openDialog('300ms', '300ms', Modes.questions) },
-    { title: '🎙️ Text to Audio', action: () => {} },
+    { title: '🎙️ Text to Audio', action: () => this.openDialog('300ms', '300ms', Modes.textToAudio) },
     { title: '🖋️ Get your Highlight Text', action: () => {} }
   ];
 

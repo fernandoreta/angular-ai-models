@@ -118,6 +118,15 @@ export class DialogAnimationsComponent implements OnInit {
     this.extractedText = result.answer;
   }
 
+  async textToAudioModel() {
+    console.log('Loading model 💭');
+    this.thinking = true;
+    const synthesis = new SpeechSynthesisUtterance('Hello, my name is Fernando, Happy New Year!');
+    window.speechSynthesis.speak(synthesis);
+    this.imagePreview = '';
+    this.thinking = false;
+  }
+
   extractTextFromImage(): void {
     if (this.data.mode === Modes.imageToText) {
       this.imageToText();
@@ -125,6 +134,8 @@ export class DialogAnimationsComponent implements OnInit {
       this.resume();
     } else if (this.data.mode === Modes.questions) {
       this.questionsModel();
+    } else if (this.data.mode === Modes.textToAudio) {
+      this.textToAudioModel();
     }
   }
 
