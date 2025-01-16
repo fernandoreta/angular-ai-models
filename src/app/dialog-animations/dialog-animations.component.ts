@@ -30,6 +30,7 @@ export class DialogAnimationsComponent implements OnInit {
 
   imagePreview = '';
   extractedText = '';
+  loadingText!: string;
   nameText!: string;
   typeText!: string;
   thinking = false;
@@ -72,18 +73,16 @@ export class DialogAnimationsComponent implements OnInit {
 
   imageToText() {
     this.thinking = true;
+    this.loadingText = 'Extracting Text';
     this.modelService.recognizeText(this.imagePreview).pipe(take(1))
     .subscribe({
       next: (text: string) => {
         this.thinking = false;
         this.extractedText = this.cleanExtractedText(text);
         this.imagePreview = '';
-        console.log('Text Extracted Successfully! 🎉');
-        console.log(this.extractedText);
       },
       error: (err: any) => console.error('OCR error', err),
       complete: () => {
-        console.log('OCR process complete 🚀');
         this.thinking = false;
       },
     });
@@ -94,28 +93,26 @@ export class DialogAnimationsComponent implements OnInit {
   }
 
   async resume() {
-    console.log('Loading model 💭');
-    this.thinking = true;
-    await this.loadSummarization();
-    console.log('Model charged!🚀');
-    console.log('Resuming 🤔');
-    const res = await this.summarization(this.text);
-    this.extractedText = res[0].summary_text;
-    this.thinking = false;
-    this.imagePreview = ''
-    console.log(this.extractedText);
-    console.log('Resume Complete!📝');
+    try {
+      this.loadingText = 'Resuming Text';
+      this.thinking = true;
+      await this.loadSummarization();
+      const text = await this.modelService.recognizeText(this.imagePreview).pipe(take(1)).toPromise();
+      const res = await this.summarization(text);
+  
+      this.extractedText = res[0].summary_text;
+    } catch (error) {
+      console.error('Error during resume:', error);
+    } finally {
+      this.thinking = false;
+      this.imagePreview = '';
+    }
   }
+  
   
   //Resume
   // https://huggingface.co/tasks/summarization
   private summarization: any;
-  text = `La revolución de la inteligencia artificial en la medicina
-    En los últimos años, la inteligencia artificial (IA) ha transformado el sector de la salud, proporcionando herramientas innovadoras para el diagnóstico, el tratamiento y la gestión de pacientes. Los algoritmos avanzados, como el aprendizaje automático y el aprendizaje profundo, permiten analizar grandes volúmenes de datos médicos con una precisión sin precedentes. Por ejemplo, sistemas basados en IA pueden detectar anomalías en radiografías con una precisión similar o incluso superior a la de los médicos experimentados.
-
-    Además, las aplicaciones de IA en la medicina no se limitan al diagnóstico. También están revolucionando la investigación farmacéutica al identificar posibles compuestos para nuevos medicamentos de manera más eficiente. En el campo de la atención personalizada, los sistemas de IA pueden recomendar tratamientos adaptados a las características específicas de cada paciente, mejorando los resultados clínicos.
-
-    Sin embargo, el uso de la IA en la salud plantea desafíos importantes, como la privacidad de los datos, la regulación y la necesidad de garantizar que estas herramientas se utilicen de manera ética. A medida que la tecnología avanza, la colaboración entre expertos en tecnología, médicos y legisladores será crucial para maximizar los beneficios de la IA y minimizar sus riesgos.`;
   resumeText = '';
 
   async questionsModel() {
