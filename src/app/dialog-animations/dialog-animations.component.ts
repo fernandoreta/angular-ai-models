@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs';
 import { ModelService } from 'src/services/model.service';
 import { Modes } from '../app.component';
@@ -7,6 +7,7 @@ import { pipeline } from '@xenova/transformers';
 import { HighlightService } from '../highlight.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DialogQuestionsComponent } from '../dialog-questions/dialog-questions.component';
 
 @Component({
   selector: 'app-dialog-animations',
@@ -17,6 +18,7 @@ export class DialogAnimationsComponent implements OnInit {
 
   constructor(
     private dialogRef: MatDialogRef<DialogAnimationsComponent>,
+    private dialog: MatDialog,
     private modelService: ModelService,
     private highlightService: HighlightService,
     private fb: FormBuilder,
@@ -115,20 +117,40 @@ export class DialogAnimationsComponent implements OnInit {
   private summarization: any;
   resumeText = '';
 
-  async questionsModel() {
-    console.log('Loading model 💭');
-    this.thinking = true;
-    this.imagePreview = 'https://huggingface.co/datasets/Xenova/transformers.js-docs/resolve/main/invoice.png';
-    const questionsPipeline = await pipeline('document-question-answering', 'Xenova/donut-base-finetuned-docvqa');
-    console.log('Model charged!🚀');
-    const question = 'What is the invoice number?';
-    const output = await questionsPipeline(this.imagePreview, question);
-    this.imagePreview = '';
-    this.thinking = false;
-    console.log(output);
-    const result = output[0] as any;
-    this.extractedText = result.answer;
+  openQuestionsDialog(enterAnimationDuration: string, exitAnimationDuration: string) {
+    this.dialog.open(DialogQuestionsComponent, {
+      width: '600px',
+      enterAnimationDuration,
+      exitAnimationDuration
+    });
   }
+  
+  async questionsModel() {
+    this.thinking = true;
+    const questionsPipeline = await pipeline('document-question-answering', 'Xenova/donut-base-finetuned-docvqa');
+    this.thinking = false;
+    const dialogRef = this.dialog.open(DialogQuestionsComponent, {
+      data: { animal: '' },
+    });
+    const dialogResult = await dialogRef.afterClosed().toPromise();
+    
+    if (dialogResult !== undefined) {
+      this.thinking = true;
+  
+      try {
+        const output = await questionsPipeline(this.imagePreview, dialogResult);
+        this.imagePreview = '';
+        console.log(output);
+        const result = output[0] as any;
+        this.extractedText = result.answer;
+      } catch (error) {
+        console.error('Error during pipeline processing:', error);
+      } finally {
+        this.thinking = false;
+      }
+    }
+  }  
+  
 
   async textToAudioModel() {
     console.log('Loading model 💭');

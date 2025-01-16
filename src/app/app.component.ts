@@ -6,6 +6,7 @@ import { ModelService } from 'src/services/model.service';
 import { DialogAnimationsComponent } from './dialog-animations/dialog-animations.component';
 import { MatDialog } from '@angular/material/dialog';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { DialogQuestionsComponent } from './dialog-questions/dialog-questions.component';
 export enum Modes {
   imageToText = 'imageToText',
   resume = 'resume',

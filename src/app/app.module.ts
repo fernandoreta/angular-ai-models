@@ -8,11 +8,13 @@ import { MaterialModule } from 'material.module';
 import { DialogAnimationsComponent } from './dialog-animations/dialog-animations.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DialogQuestionsComponent } from './dialog-questions/dialog-questions.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DialogAnimationsComponent
+    DialogAnimationsComponent,
+    DialogQuestionsComponent
   ],
   imports: [
     CommonModule,
