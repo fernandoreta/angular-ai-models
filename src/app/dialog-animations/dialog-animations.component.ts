@@ -73,6 +73,10 @@ export class DialogAnimationsComponent implements OnInit {
     }
   }
 
+  async getTextFromImage() {
+    return this.modelService.recognizeText(this.imagePreview).pipe(take(1)).toPromise();
+  }
+
   imageToText() {
     this.thinking = true;
     this.loadingText = 'Extracting Text';
@@ -99,7 +103,7 @@ export class DialogAnimationsComponent implements OnInit {
       this.loadingText = 'Resuming Text';
       this.thinking = true;
       await this.loadSummarization();
-      const text = await this.modelService.recognizeText(this.imagePreview).pipe(take(1)).toPromise();
+      const text = await this.getTextFromImage();
       const res = await this.summarization(text);
   
       this.extractedText = res[0].summary_text;
@@ -151,15 +155,78 @@ export class DialogAnimationsComponent implements OnInit {
     }
   }  
   
+  isPlaying!: boolean;
+  synthesisInstance!: SpeechSynthesisUtterance;
+  isAudio!: boolean;
+  progress = 0;
+  interval: any;
 
   async textToAudioModel() {
-    console.log('Loading model 💭');
     this.thinking = true;
-    const synthesis = new SpeechSynthesisUtterance('Hello, my name is Fernando, Happy New Year!');
-    window.speechSynthesis.speak(synthesis);
+    const text = await this.getTextFromImage();
+    this.synthesisInstance = new SpeechSynthesisUtterance(text);
+  
+    this.synthesisInstance.onstart = () => {
+      this.isPlaying = true;
+      this.isAudio = true;
+      this.startProgressTracker();
+    };
+  
+    this.synthesisInstance.onend = () => {
+      this.isPlaying = false;
+      this.resetProgressTracker();
+    };
+  
+    window.speechSynthesis.speak(this.synthesisInstance);
     this.imagePreview = '';
     this.thinking = false;
   }
+  
+  pauseAudio() {
+    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+      window.speechSynthesis.pause();
+      this.isPlaying = false;
+      clearInterval(this.interval);
+    }
+  }
+  
+  resumeAudio() {
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      this.isPlaying = true;
+      this.startProgressTracker();
+    } else {
+      window.speechSynthesis.speak(this.synthesisInstance);
+    }
+  }
+  
+  stopAudio() {
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+      this.isPlaying = false;
+      this.resetProgressTracker();
+    }
+  }
+  
+  startProgressTracker() {
+    const estimatedDuration = this.synthesisInstance?.text.length * 50; // Estimación: 50ms por carácter
+    const startTime = Date.now();
+  
+    this.interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      this.progress = Math.min((elapsed / estimatedDuration) * 100, 100);
+  
+      if (this.progress >= 100) {
+        clearInterval(this.interval);
+      }
+    }, 100);
+  }
+  
+  resetProgressTracker() {
+    clearInterval(this.interval);
+    this.progress = 0;
+  }
+  
 
   async executeModel(imageElement?: HTMLImageElement): Promise<void> {
     if (this.data.mode === Modes.imageToText) {
