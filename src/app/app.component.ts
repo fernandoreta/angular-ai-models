@@ -7,6 +7,7 @@ import { DialogAnimationsComponent } from './dialog-animations/dialog-animations
 import { MatDialog } from '@angular/material/dialog';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { DialogQuestionsComponent } from './dialog-questions/dialog-questions.component';
+import { Router } from '@angular/router';
 export enum Modes {
   imageToText = 'imageToText',
   resume = 'resume',
@@ -34,38 +35,32 @@ export class AppComponent {
   @ViewChild('imageContainer', { static: false }) imageContainer!: ElementRef;
   title = 'InstaRead';
 
-  constructor(
-    private modelService: ModelService,
-    private dialog: MatDialog
-  ) {}
+  constructor(private router: Router) {}
   
   //Image to text.
   imagePath = 'assets/example.jpg';
   extractedText: string = '';
 
-  models: IModels[] = [
-    { title: '🌠 Image to Text', action: () => this.openDialog('300ms', '300ms', Modes.imageToText) },
-    { title: '📒 Resume', action: () => this.openDialog('300ms', '300ms', Modes.resume) },
-    { title: '🙋🏽 Questions', action: () => this.openDialog('300ms', '300ms', Modes.questions) },
-    { title: '🎙️ Text to Audio', action: () => this.openDialog('300ms', '300ms', Modes.textToAudio) },
-    { title: '🖋️ Get your Highlight Text', action: () => this.openDialog('300ms', '300ms', Modes.highlight) }
-  ];
-
   footers: IModels[] = [
-    { title: '📚 Books', action: () => {} },
-    { title: '🔖 Articles', action: () => {} },
-    { title: '🔍 Search', action: () => {} },
-    { title: '🪪 Profile', action: () => {} },
+    {
+      title: '📚 Books',
+      navigate: () => this.router.navigate(['/books'])
+    },
+    {
+      title: '🔖 Articles',
+      navigate: () => this.router.navigate(['/articles'])
+    },
+    {
+      title: '🔍 Search',
+      navigate: () => this.router.navigate(['/search'])
+    },
+    {
+      title: '🪪 Profile',
+      navigate: () => this.router.navigate(['/profile'])
+    }
   ];
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string, mode: string): void {
-    this.dialog.open(DialogAnimationsComponent, {
-      width: '600px',
-      enterAnimationDuration,
-      exitAnimationDuration,
-      data: {
-        mode
-      }
-    });
+  backDashboard() {
+    this.router.navigate(['/']);
   }
 }

@@ -1,4 +1,5 @@
 export interface IModels {
     title: string;
-    action: () => void;
+    action?: () => void;
+    navigate?: () => void;
 }

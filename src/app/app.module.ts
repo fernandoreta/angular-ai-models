@@ -9,12 +9,22 @@ import { DialogAnimationsComponent } from './dialog-animations/dialog-animations
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogQuestionsComponent } from './dialog-questions/dialog-questions.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { BooksComponent } from './books/books.component';
+import { ArticlesComponent } from './articles/articles.component';
+import { SearchComponent } from './search/search.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DialogAnimationsComponent,
-    DialogQuestionsComponent
+    DialogQuestionsComponent,
+    DashboardComponent,
+    BooksComponent,
+    ArticlesComponent,
+    SearchComponent,
+    ProfileComponent
   ],
   imports: [
     CommonModule,
