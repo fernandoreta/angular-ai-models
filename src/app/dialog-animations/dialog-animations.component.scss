@@ -46,3 +46,14 @@
     pointer-events: none;
   }
   
+  .example-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 400px;
+  }
+  
+  .example-full-width {
+    width: 100%;
+  }
+  

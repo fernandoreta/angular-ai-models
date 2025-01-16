@@ -10,7 +10,8 @@ export enum Modes {
   imageToText = 'imageToText',
   resume = 'resume',
   questions = 'questions',
-  textToAudio = 'textToAudio'
+  textToAudio = 'textToAudio',
+  highlight = 'highlight'
 }
 @Component({
   selector: 'app-root',
@@ -46,7 +47,7 @@ export class AppComponent {
     { title: '📒 Resume', action: () => this.openDialog('300ms', '300ms', Modes.resume) },
     { title: '🙋🏽 Questions', action: () => this.openDialog('300ms', '300ms', Modes.questions) },
     { title: '🎙️ Text to Audio', action: () => this.openDialog('300ms', '300ms', Modes.textToAudio) },
-    { title: '🖋️ Get your Highlight Text', action: () => {} }
+    { title: '🖋️ Get your Highlight Text', action: () => this.openDialog('300ms', '300ms', Modes.highlight) }
   ];
 
   footers: IModels[] = [

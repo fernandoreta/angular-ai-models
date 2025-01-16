@@ -1,4 +1,4 @@
-<div class="dialog-container">
+<div *ngIf="!saveMode" class="dialog-container">
     <div class="overlay" *ngIf="thinking"></div>
     
     <h1 mat-dialog-title>
@@ -31,7 +31,7 @@
     </div>
     
     <div mat-dialog-actions align="end">
-        <button *ngIf="extractedText" mat-button mat-dialog-close (click)="confirmSelection()">
+        <button *ngIf="extractedText" mat-button (click)="saveMode = true">
             💾 Save
         </button>
         <button mat-button mat-dialog-close cdkFocusInitial>
@@ -43,5 +43,31 @@
     <div *ngIf="thinking" class="spinner-container">
         <mat-spinner></mat-spinner>
         <p class="spinner-text">Extracting Text</p>
+    </div>
+</div>
+
+<div *ngIf="saveMode">
+    <form [formGroup]="form" class="example-container">
+      <mat-form-field appearance="fill" class="example-full-width">
+        <mat-label>Name</mat-label>
+        <input formControlName="name" matInput placeholder="Enter name" />
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill" class="example-full-width">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type">
+          <mat-option value="book">Book</mat-option>
+          <mat-option value="article">Article</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </form>
+  
+    <div mat-dialog-actions align="end">
+      <button [disabled]="form.invalid" mat-button mat-dialog-close (click)="confirmSelection()">
+        💾 Save
+      </button>
+      <button mat-button mat-dialog-close cdkFocusInitial>
+        🔙 Cancel
+      </button>
     </div>
 </div>  

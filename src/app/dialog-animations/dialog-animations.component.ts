@@ -4,6 +4,9 @@ import { take } from 'rxjs';
 import { ModelService } from 'src/services/model.service';
 import { Modes } from '../app.component';
 import { pipeline } from '@xenova/transformers';
+import { HighlightService } from '../highlight.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dialog-animations',
@@ -15,12 +18,23 @@ export class DialogAnimationsComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<DialogAnimationsComponent>,
     private modelService: ModelService,
+    private highlightService: HighlightService,
+    private fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: { onSelectImage: () => void, mode: string }
-  ) {}
+  ) {
+    this.form = this.fb.group({
+      name: ['', Validators.required], // Campo obligatorio
+      type: ['book', Validators.required], // Valor predeterminado "book"
+    });
+  }
 
   imagePreview = '';
   extractedText = '';
+  nameText!: string;
+  typeText!: string;
   thinking = false;
+  saveMode = false;
+  form!: FormGroup;
 
   removeImage() {
     this.imagePreview = '';
@@ -44,9 +58,11 @@ export class DialogAnimationsComponent implements OnInit {
       const file = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
+        const imageElement = new Image();
+        imageElement.src = reader.result as string;
         this.imagePreview = reader.result as string;
         if (this.imagePreview) {
-          this.extractTextFromImage();
+          this.executeModel(imageElement);
         }
       };
 
@@ -55,23 +71,22 @@ export class DialogAnimationsComponent implements OnInit {
   }
 
   imageToText() {
-    console.log('Extracting Text ⌛️');
-      this.thinking = true;
-      this.modelService.recognizeText(this.imagePreview).pipe(take(1))
-      .subscribe({
-        next: (text: string) => {
-          this.thinking = false;
-          this.extractedText = this.cleanExtractedText(text);
-          this.imagePreview = '';
-          console.log('Text Extracted Successfully! 🎉');
-          console.log(this.extractedText);
-        },
-        error: (err: any) => console.error('OCR error', err),
-        complete: () => {
-          console.log('OCR process complete 🚀');
-          this.thinking = false;
-        },
-      });
+    this.thinking = true;
+    this.modelService.recognizeText(this.imagePreview).pipe(take(1))
+    .subscribe({
+      next: (text: string) => {
+        this.thinking = false;
+        this.extractedText = this.cleanExtractedText(text);
+        this.imagePreview = '';
+        console.log('Text Extracted Successfully! 🎉');
+        console.log(this.extractedText);
+      },
+      error: (err: any) => console.error('OCR error', err),
+      complete: () => {
+        console.log('OCR process complete 🚀');
+        this.thinking = false;
+      },
+    });
   }
 
   async loadSummarization() {
@@ -127,7 +142,7 @@ export class DialogAnimationsComponent implements OnInit {
     this.thinking = false;
   }
 
-  extractTextFromImage(): void {
+  async executeModel(imageElement?: HTMLImageElement): Promise<void> {
     if (this.data.mode === Modes.imageToText) {
       this.imageToText();
     } else if (this.data.mode === Modes.resume) {
@@ -136,9 +151,16 @@ export class DialogAnimationsComponent implements OnInit {
       this.questionsModel();
     } else if (this.data.mode === Modes.textToAudio) {
       this.textToAudioModel();
+    } else if (this.data.mode === Modes.highlight) {
+      console.log('Loading model 💭');
+      this.thinking = true;
+      // wait to be more realistic
+      setTimeout(() => {
+        this.highlightService.detectHighlightedAreas(imageElement);
+        this.thinking = false;
+      }, 3000);
     }
   }
-
 
   private cleanExtractedText(text: string): string {
     let cleanedText = text.replace(/[^a-zA-Z0-9\s]/g, '').trim();
@@ -152,8 +174,12 @@ export class DialogAnimationsComponent implements OnInit {
    /**
    * Close the dialog and return the selected image.
    */
-   confirmSelection(): void {
-    console.log('confirm');
+  confirmSelection(): void {
+    const { name, type } = this.form.value;
+    console.log(this.extractedText);
+    console.log('Name:', name);
+    console.log('Type:', type);
+    this.modelService.showSnackBar('Text Saved');
     // this.dialogRef.close(this.imagePreview);
   }
 
