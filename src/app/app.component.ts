@@ -43,12 +43,8 @@ export class AppComponent {
 
   footers: IModels[] = [
     {
-      title: '📚 Books',
-      navigate: () => this.router.navigate(['/books'])
-    },
-    {
-      title: '🔖 Articles',
-      navigate: () => this.router.navigate(['/articles'])
+      title: '📚 Notes',
+      navigate: () => this.router.navigate(['/notes'])
     },
     {
       title: '🔍 Search',

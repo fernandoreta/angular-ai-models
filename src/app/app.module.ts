@@ -10,10 +10,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogQuestionsComponent } from './dialog-questions/dialog-questions.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { BooksComponent } from './books/books.component';
-import { ArticlesComponent } from './articles/articles.component';
+import { NotesComponent } from './notes/notes.component';
 import { SearchComponent } from './search/search.component';
 import { ProfileComponent } from './profile/profile.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -21,8 +25,7 @@ import { ProfileComponent } from './profile/profile.component';
     DialogAnimationsComponent,
     DialogQuestionsComponent,
     DashboardComponent,
-    BooksComponent,
-    ArticlesComponent,
+    NotesComponent,
     SearchComponent,
     ProfileComponent
   ],
@@ -33,7 +36,12 @@ import { ProfileComponent } from './profile/profile.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MaterialModule
+    MaterialModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule
   ],
   providers: [],
   bootstrap: [AppComponent]
