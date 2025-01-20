@@ -15,7 +15,7 @@ export class DashboardComponent implements OnInit {
     { title: '📒 Resume', action: () => this.openDialog('300ms', '300ms', Modes.resume) },
     { title: '🙋🏽 Questions', action: () => this.openDialog('300ms', '300ms', Modes.questions) },
     { title: '🎙️ Text to Audio', action: () => this.openDialog('300ms', '300ms', Modes.textToAudio) },
-    { title: '🖋️ Get your Highlight Text', action: () => this.openDialog('300ms', '300ms', Modes.highlight) }
+    { title: '🖋️ Highlight Text', action: () => this.openDialog('300ms', '300ms', Modes.highlight) }
   ];
   constructor(private dialog: MatDialog) { }
 
