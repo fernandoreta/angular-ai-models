@@ -8,6 +8,7 @@ import { HighlightService } from '../highlight.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DialogQuestionsComponent } from '../dialog-questions/dialog-questions.component';
+import { ISavedText, Types } from 'src/interfaces/models.interface';
 
 @Component({
   selector: 'app-dialog-animations',
@@ -260,14 +261,27 @@ export class DialogAnimationsComponent implements OnInit {
    /**
    * Close the dialog and return the selected image.
    */
-  confirmSelection(): void {
+   confirmSelection(): void {
     const { name, type } = this.form.value;
-    console.log(this.extractedText);
-    console.log('Name:', name);
-    console.log('Type:', type);
-    this.modelService.showSnackBar('Text Saved');
-    // this.dialogRef.close(this.imagePreview);
-  }
+
+    const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+
+    const newText: ISavedText = {
+      name: capitalize(name),
+      type: capitalize(type) as Types,
+      content: this.extractedText
+    };
+
+    const savedTexts = localStorage.getItem('saved-texts');
+    let updatedTexts: ISavedText[] = savedTexts ? JSON.parse(savedTexts) : [];
+
+    updatedTexts.push(newText);
+    localStorage.setItem('saved-texts', JSON.stringify(updatedTexts));
+    this.modelService.showSnackBar('Text Added');
+}
+
+
+
 
   ngOnInit(): void {
   }
