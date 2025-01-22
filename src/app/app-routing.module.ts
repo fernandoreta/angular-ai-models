@@ -9,7 +9,6 @@ const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'notes', component: NotesComponent },
-  { path: 'search', component: SearchComponent },
   { path: 'profile', component: ProfileComponent },
 ];
 
