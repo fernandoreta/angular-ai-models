@@ -18,7 +18,6 @@ import { ISavedText, Types } from 'src/interfaces/models.interface';
 export class DialogAnimationsComponent implements OnInit {
 
   constructor(
-    private dialogRef: MatDialogRef<DialogAnimationsComponent>,
     private dialog: MatDialog,
     private modelService: ModelService,
     private highlightService: HighlightService,
@@ -39,6 +38,7 @@ export class DialogAnimationsComponent implements OnInit {
   thinking = false;
   saveMode = false;
   form!: FormGroup;
+  private questionsPipeline: any = null;
 
   removeImage() {
     this.imagePreview = '';
@@ -96,7 +96,9 @@ export class DialogAnimationsComponent implements OnInit {
   }
 
   async loadSummarization() {
-    this.summarization = await pipeline('summarization', 'Xenova/distilbart-cnn-6-6');
+    if (!this.summarization) {
+      this.summarization = await pipeline('summarization', 'Xenova/distilbart-cnn-6-6');
+    }
   }
 
   async resume() {
@@ -130,20 +132,27 @@ export class DialogAnimationsComponent implements OnInit {
     });
   }
   
+
+  async loadQuestionsPipeline() {
+    if (!this.questionsPipeline) { // Solo carga el modelo si no está ya en memoria.
+      this.questionsPipeline = await pipeline('document-question-answering', 'Xenova/donut-base-finetuned-docvqa');
+    }
+  }
+
   async questionsModel() {
     this.thinking = true;
-    const questionsPipeline = await pipeline('document-question-answering', 'Xenova/donut-base-finetuned-docvqa');
+    await this.loadQuestionsPipeline();
     this.thinking = false;
+
     const dialogRef = this.dialog.open(DialogQuestionsComponent, {
       data: { animal: '' },
     });
     const dialogResult = await dialogRef.afterClosed().toPromise();
-    
+
     if (dialogResult !== undefined) {
       this.thinking = true;
-  
       try {
-        const output = await questionsPipeline(this.imagePreview, dialogResult);
+        const output = await this.questionsPipeline(this.imagePreview, dialogResult);
         this.imagePreview = '';
         console.log(output);
         const result = output[0] as any;
@@ -154,8 +163,8 @@ export class DialogAnimationsComponent implements OnInit {
         this.thinking = false;
       }
     }
-  }  
-  
+  }
+ 
   isPlaying!: boolean;
   synthesisInstance!: SpeechSynthesisUtterance;
   isAudio!: boolean;

@@ -1,1 +1,121 @@
-<p>profile works!</p>
+<mat-card class="example-card" *ngIf="loggedIn">
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title>
+        <ng-container *ngIf="!isEditing; else editName">
+          {{ name }}
+        </ng-container>
+        <ng-template #editName>
+          <mat-form-field appearance="fill">
+            <mat-label>Name</mat-label>
+            <input matInput [(ngModel)]="name" />
+          </mat-form-field>
+        </ng-template>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <ng-container *ngIf="!isEditing; else editPronoun">
+          {{ pronoun }}
+        </ng-container>
+        <ng-template #editPronoun>
+          <mat-form-field appearance="fill">
+            <mat-label>Pronoun</mat-label>
+            <input matInput [(ngModel)]="pronoun" />
+          </mat-form-field>
+        </ng-template>
+      </mat-card-subtitle>
+    </mat-card-header>
+  
+    <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
+    
+    <mat-card-content>
+      <mat-card>
+        <ng-container *ngIf="!isEditing; else editDetails">
+          <h1>Name: {{ name }}</h1>
+          <h1>Last Name: {{ lastName }}</h1>
+          <h2>Saved Articles:</h2> {{ savedArticles }}
+        </ng-container>
+        <ng-template #editDetails>
+            <mat-form-field appearance="fill">
+                <mat-label>Name</mat-label>
+                <input matInput [(ngModel)]="name" />
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Last Name</mat-label>
+                <input matInput [(ngModel)]="lastName" />
+            </mat-form-field>
+        </ng-template>
+      </mat-card>
+    </mat-card-content>
+  
+    <mat-card-actions align="end">
+      <button mat-button (click)="toggleEditMode()">
+        {{ isEditing ? 'Save' : 'Edit Profile' }}
+      </button>
+    </mat-card-actions>
+</mat-card>
+
+<mat-card class="example-card" *ngIf="!loggedIn">
+    <mat-card-header>
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title>Sign up or Login</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <mat-tab-group>
+            <mat-tab label="Login">
+              <mat-card class="form-card">
+                <mat-form-field appearance="outline">
+                  <mat-label>Enter your email</mat-label>
+                  <input matInput placeholder="pat@example.com" [(ngModel)]="email" (blur)="updateErrorMessage()" required>
+                  <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
+                </mat-form-field>
+              
+                <button mat-raised-button color="primary" (click)="submitEmail()">Send</button>
+              </mat-card>              
+            </mat-tab>
+            <mat-tab label="Sign Up">
+              <mat-card class="form-card">
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">     
+                  <mat-form-field appearance="outline">
+                    <mat-label>Name</mat-label>
+                    <input matInput formControlName="name">
+                    <mat-error *ngIf="form.get('name')?.hasError('required')">
+                      Name is mandatory
+                    </mat-error>
+                    <mat-error *ngIf="form.get('name')?.hasError('minlength')">
+                      Min 3 characters
+                    </mat-error>
+                  </mat-form-field>
+              
+                  <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input matInput type="email" formControlName="email">
+                    <mat-error *ngIf="form.get('email')?.hasError('required')">
+                      Email is mandatory
+                    </mat-error>
+                    <mat-error *ngIf="form.get('email')?.hasError('email')">
+                      Enter a valid email
+                    </mat-error>
+                  </mat-form-field>
+              
+                  <mat-form-field appearance="outline">
+                    <mat-label>Passowrd</mat-label>
+                    <input matInput type="password" formControlName="password">
+                    <mat-error *ngIf="form.get('password')?.hasError('required')">
+                      Password is mandatory
+                    </mat-error>
+                    <mat-error *ngIf="form.get('password')?.hasError('minlength')">
+                      Min 6 characters
+                    </mat-error>
+                  </mat-form-field>
+              
+                  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+                    Send
+                  </button>
+              
+                </form>
+              </mat-card>              
+            </mat-tab>
+          </mat-tab-group>
+    </mat-card-content>
+</mat-card>
+  
