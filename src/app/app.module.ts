@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { importProvidersFrom, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -18,6 +18,20 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { HttpClientModule } from '@angular/common/http';
+import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { Auth, AuthModule } from '@angular/fire/auth';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDI6dLWcigQzqaCyaojCNMiYoAGoDjqTxk",
+  authDomain: "instaread-5b968.firebaseapp.com",
+  projectId: "instaread-5b968",
+  storageBucket: "instaread-5b968.firebasestorage.app",
+  messagingSenderId: "1051945646306",
+  appId: "1:1051945646306:web:5b738b0b51850ed8d246bb",
+  measurementId: "G-FGB9MNT7B8"
+};
 
 @NgModule({
   declarations: [
@@ -30,6 +44,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     ProfileComponent
   ],
   imports: [
+    AuthModule,
+    provideFirebaseApp(() => initializeApp(firebaseConfig)),
+    provideFirestore(() => getFirestore()),
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -41,9 +58,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatInputModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    HttpClientModule
   ],
-  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

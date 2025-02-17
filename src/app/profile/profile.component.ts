@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { RegisterService } from '../register.service';
+import { UtilsService } from 'src/services/utils.service';
+import { UserCredential } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -14,9 +18,15 @@ export class ProfileComponent implements OnInit {
   isEditing!: boolean;
   loggedIn = false;
   form: FormGroup;
-  email: string = '';
+  email = '';
+  password = '';
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private registerService: RegisterService,
+    private utilsService: UtilsService,
+    private router: Router
+  ) {
       this.form = this.fb.group({
         name: ['', [Validators.required, Validators.minLength(3)]],
         email: ['', [Validators.required, Validators.email]],
@@ -48,19 +58,41 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  onSubmit() {
+  onRegisterSubmit() {
     if (this.form.valid) {
-      console.log('Formulario enviado', this.form.value);
+    this.registerService.register(this.form.value)
+      .then(userCredential => {
+        this.setToken(userCredential);
+        this.utilsService.openSnackBar(`Logged In as ${userCredential.user.email}`);
+      })
+      .catch(error => {
+        this.utilsService.openSnackBar(error.message);
+      });
     }
   }
 
-  submitEmail() {
-    if (!this.errorMessage && this.email) {
-      console.log('Correo enviado:', this.email);
+  login() {
+    if (!this.errorMessage && this.email && this.password) {
+      this.registerService.login(this.email, this.password)
+        .then(res => {
+          this.setToken(res);
+          const route = `dashboard`;
+          this.router.navigate([route]);
+          this.utilsService.openSnackBar(`Logged In as ${res.user.email}`);
+        }).catch(error => {
+          this.utilsService.openSnackBar(error.message);
+        });
     }
+  }
+
+  setToken(res: UserCredential) {
+    res.user.getIdToken().then(token => {
+      this.registerService.setCookie(token);
+    });
   }
 
   ngOnInit(): void {
+    this.loggedIn = document.cookie ? true : false;
     const articles = JSON.parse(localStorage.getItem('saved-texts') || '');
     this.savedArticles = articles.length ? articles.length : 0;
   }

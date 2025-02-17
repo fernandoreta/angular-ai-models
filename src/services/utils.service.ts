@@ -12,6 +12,7 @@ export class UtilsService {
     this._snackBar.open(text ? text : 'Successfully', 'Dismiss', {
       horizontalPosition: 'end',
       verticalPosition: 'top',
+      duration: 5000
     });
   }
 }

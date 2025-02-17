@@ -68,13 +68,23 @@
                   <input matInput placeholder="pat@example.com" [(ngModel)]="email" (blur)="updateErrorMessage()" required>
                   <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
                 </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Password</mat-label>
+                  <input matInput type="password" [(ngModel)]="password" required>
+                </mat-form-field>
               
-                <button mat-raised-button color="primary" (click)="submitEmail()">Send</button>
+                <button
+                  [disabled]="!password || !email"
+                  mat-raised-button
+                  color="primary"
+                  (click)="login()">
+                  Send
+                </button>
               </mat-card>              
             </mat-tab>
             <mat-tab label="Sign Up">
               <mat-card class="form-card">
-                <form [formGroup]="form" (ngSubmit)="onSubmit()">     
+                <form [formGroup]="form" (ngSubmit)="onRegisterSubmit()">     
                   <mat-form-field appearance="outline">
                     <mat-label>Name</mat-label>
                     <input matInput formControlName="name">

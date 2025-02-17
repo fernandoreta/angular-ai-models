@@ -14,3 +14,9 @@ export enum Types {
     Book = 'Book',
     Article = 'Article'
 }
+
+export interface IUser {
+    name?: string;
+    email: string;
+    password: string;
+}
