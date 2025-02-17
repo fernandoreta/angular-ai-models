@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { take } from 'rxjs';
 import { ModelService } from 'src/services/model.service';
@@ -16,7 +16,7 @@ import { ISavedText, Types } from 'src/interfaces/models.interface';
   styleUrls: ['./dialog-animations.component.scss']
 })
 export class DialogAnimationsComponent implements OnInit {
-
+  @ViewChild('videoElement', { static: false }) videoElement!: ElementRef;
   constructor(
     private dialog: MatDialog,
     private modelService: ModelService,
@@ -30,6 +30,7 @@ export class DialogAnimationsComponent implements OnInit {
     });
   }
 
+  cameraOn = false;
   imagePreview = '';
   extractedText = '';
   loadingText!: string;
@@ -287,10 +288,49 @@ export class DialogAnimationsComponent implements OnInit {
     updatedTexts.push(newText);
     localStorage.setItem('saved-texts', JSON.stringify(updatedTexts));
     this.modelService.showSnackBar('Text Added');
-}
+  }
 
+  takePhoto() {
+    const video = this.videoElement.nativeElement;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+  
+    if (ctx) {
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+  
+        const file = new File([blob], 'captured-image.png', { type: 'image/png' });
+  
+        // Asignar al input file
+        const fileInput = document.getElementById('imageInput') as HTMLInputElement;
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+  
+        // Crear evento para llamar a onImageSelected() manualmente
+        const event = new Event('change', { bubbles: true });
+        fileInput.dispatchEvent(event);
+        this.cameraOn = false;
+        // Llamar directamente a la función onImageSelected()
+        this.onImageSelected({ target: fileInput } as unknown as Event);
+      }, 'image/png');
+    }
+  }
+  
+  
 
-
+  openCamera() {
+    this.cameraOn = true;
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      this.videoElement.nativeElement.srcObject = stream;
+    })
+    .catch(error => console.error('Error', error));
+  }
 
   ngOnInit(): void {
   }

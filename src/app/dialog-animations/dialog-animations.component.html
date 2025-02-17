@@ -7,6 +7,9 @@
     </h1>
     
     <div mat-dialog-content [class.disabled]="thinking">
+        <div *ngIf="cameraOn">
+          <video #videoElement autoplay playsinline></video>
+        </div>
         <div *ngIf="imagePreview" style="position: relative; display: inline-block; width: 100%;">
             <img [src]="imagePreview" alt="Preview" style="width: 100%; margin-bottom: 10px;" />
             <button class="remove" (click)="removeImage()">✖</button>
@@ -16,18 +19,29 @@
         </div>
     
         <input type="file" id="imageInput" (change)="onImageSelected($event)" accept="image/*" hidden />
-        <button
+        <div *ngIf="cameraOn">
+          <button
+            (click)="takePhoto()"
             style="margin-top: 10px; width: 190px;"
             mat-stroked-button color="primary">
             📸 Take Photo
-        </button>
-        <button
+          </button>
+        </div>
+        <div *ngIf="!cameraOn">
+          <button
+            (click)="openCamera()"
             style="margin-top: 10px; width: 190px;"
-            mat-stroked-button
-            color="accent"
-            (click)="onSelectImage()">
-            🖼️ Get From Library
-        </button>
+            mat-stroked-button color="primary">
+            📸 Opn Camera
+          </button>
+          <button
+              style="margin-top: 10px; width: 190px;"
+              mat-stroked-button
+              color="accent"
+              (click)="onSelectImage()">
+              🖼️ Get From Library
+          </button>
+        </div>
     </div>
 
     <div *ngIf="isAudio" class="audio-player">

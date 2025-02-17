@@ -11,11 +11,11 @@ import { Modes } from '../app.component';
 })
 export class DashboardComponent implements OnInit {
   models = [
-    { title: '🌠 Image to Text', action: () => this.openDialog('300ms', '300ms', Modes.imageToText) },
-    { title: '📒 Resume', action: () => this.openDialog('300ms', '300ms', Modes.resume) },
-    { title: '🙋🏽 Questions', action: () => this.openDialog('300ms', '300ms', Modes.questions) },
-    { title: '🎙️ Text to Audio', action: () => this.openDialog('300ms', '300ms', Modes.textToAudio) },
-    { title: '🖋️ Highlight Text', action: () => this.openDialog('300ms', '300ms', Modes.highlight) }
+    { title: '🌠 Image to Text', action: () => this.openDialog('300ms', '300ms', Modes.imageToText), active: true },
+    { title: '📒 Resume', action: () => this.openDialog('300ms', '300ms', Modes.resume), active: true },
+    { title: '🙋🏽 Questions', action: () => this.openDialog('300ms', '300ms', Modes.questions), active: true },
+    { title: '🎙️ Text to Audio', action: () => this.openDialog('300ms', '300ms', Modes.textToAudio), active: false },
+    { title: '🖋️ Highlight Text', action: () => this.openDialog('300ms', '300ms', Modes.highlight), active: false }
   ];
   constructor(private dialog: MatDialog) { }
 

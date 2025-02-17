@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, UserCredential } from '@angular/fire/auth';
+import { Auth, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword, UserCredential } from '@angular/fire/auth';
 import { CookieService } from 'ngx-cookie-service';
 import { IUser } from 'src/interfaces/models.interface';
 
@@ -9,6 +9,7 @@ import { IUser } from 'src/interfaces/models.interface';
 export class RegisterService {
 
   constructor(
+    private auth: Auth,// do not remove injector
     private cookieService: CookieService
   ) { }
   

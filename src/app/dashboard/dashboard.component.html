@@ -1,8 +1,10 @@
 <div class="content">
     <div class="card-container">
         <div *ngFor="let model of models">
-          <div (click)="model.action()" class="card" style="cursor: pointer;">
-            <span>{{ model.title }}</span>
+          <div *ngIf="model.active">
+            <div (click)="model.action()" class="card" style="cursor: pointer;">
+              <span>{{ model.title }}</span>
+            </div>
           </div>
         </div>
     </div>
