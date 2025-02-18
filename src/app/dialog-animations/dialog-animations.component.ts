@@ -132,7 +132,6 @@ export class DialogAnimationsComponent implements OnInit {
       exitAnimationDuration
     });
   }
-  
 
   async loadQuestionsPipeline() {
     if (!this.questionsPipeline) { // Solo carga el modelo si no está ya en memoria.
