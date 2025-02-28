@@ -9,6 +9,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DialogQuestionsComponent } from '../dialog-questions/dialog-questions.component';
 import { ISavedText, Types } from 'src/interfaces/models.interface';
+import { UtilsService } from 'src/services/utils.service';
 
 @Component({
   selector: 'app-dialog-animations',
@@ -22,6 +23,7 @@ export class DialogAnimationsComponent implements OnInit {
     private modelService: ModelService,
     private highlightService: HighlightService,
     private fb: FormBuilder,
+    private utilsService: UtilsService,
     @Inject(MAT_DIALOG_DATA) public data: { onSelectImage: () => void, mode: string }
   ) {
     this.form = this.fb.group({
@@ -283,10 +285,19 @@ export class DialogAnimationsComponent implements OnInit {
 
     const savedTexts = localStorage.getItem('saved-texts');
     let updatedTexts: ISavedText[] = savedTexts ? JSON.parse(savedTexts) : [];
-
-    updatedTexts.push(newText);
-    localStorage.setItem('saved-texts', JSON.stringify(updatedTexts));
-    this.modelService.showSnackBar('Text Added');
+    
+    const isDuplicate = updatedTexts.some(item => item.name === newText.name);
+    if (isDuplicate) {
+      this.utilsService.openSnackBar('Choose other name for your note, this is taken 😿');
+      return;
+    }
+    if (updatedTexts?.length >= 5) {
+      this.utilsService.openSnackBar('Only 5 text allowed in free version 😢');
+    } else {
+      updatedTexts.push(newText);
+      localStorage.setItem('saved-texts', JSON.stringify(updatedTexts));
+      this.utilsService.openSnackBar('Text Added');
+    }
   }
 
   takePhoto() {

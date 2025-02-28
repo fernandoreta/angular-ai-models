@@ -8,11 +8,13 @@ export class UtilsService {
 
   constructor(private _snackBar: MatSnackBar) { }
 
+  isPremium = false;
+
   openSnackBar(text?: string) {
     this._snackBar.open(text ? text : 'Successfully', 'Dismiss', {
       horizontalPosition: 'end',
       verticalPosition: 'top',
-      duration: 5000
+      duration: 3000
     });
   }
 }

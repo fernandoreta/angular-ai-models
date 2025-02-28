@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 // @ts-ignore
 import * as Tesseract from 'tesseract.js';
@@ -9,7 +8,7 @@ import * as Tesseract from 'tesseract.js';
 })
 export class ModelService {
 
-  constructor(private snackBar: MatSnackBar) { }
+  constructor() { }
   recognizeText(imagePath: string): Observable<string> {
     return new Observable((observer) => {
       Tesseract.recognize(imagePath, 'eng', {
@@ -20,13 +19,6 @@ export class ModelService {
           observer.complete();
         })
         .catch((err) => observer.error(err));
-    });
-  }
-
-  showSnackBar(text: string) {
-    this.snackBar.open(text, '🚀', {
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
     });
   }
 }

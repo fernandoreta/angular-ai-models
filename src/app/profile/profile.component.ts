@@ -93,7 +93,8 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.loggedIn = document.cookie ? true : false;
-    const articles = JSON.parse(localStorage.getItem('saved-texts') || '');
+    const savedText = localStorage.getItem('saved-texts');
+    const articles = savedText ? JSON.parse(savedText) : [];
     this.savedArticles = articles.length ? articles.length : 0;
   }
 

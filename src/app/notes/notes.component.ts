@@ -3,12 +3,8 @@ import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-export interface UserData {
-  id: string;
-  name: string;
-  progress: string;
-  fruit: string;
-}
+import { ISavedText } from 'src/interfaces/models.interface';
+import { UtilsService } from 'src/services/utils.service';
 
 @Component({
   selector: 'app-notes',
@@ -24,15 +20,23 @@ export interface UserData {
 })
 export class NotesComponent implements AfterViewInit {
   displayedColumns: string[] = ['name', 'type'];
-  dataSource: MatTableDataSource<UserData>;
+  dataSource: MatTableDataSource<ISavedText>;
   columnsToDisplayWithExpand = [...this.displayedColumns, 'expand'];
   expandedElement: any | null;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  constructor() {
+  constructor(private utilsService: UtilsService) {
     const savedText = JSON.parse(localStorage.getItem('saved-texts') || '[]');
     this.dataSource = new MatTableDataSource(savedText);
   }
+
+  deleteNote(note: ISavedText) {
+    const savedText: ISavedText[] = JSON.parse(localStorage.getItem('saved-texts') || '[]');
+    const updatedText = savedText.filter(item => item.name !== note.name);
+    localStorage.setItem('saved-texts', JSON.stringify(updatedText));
+    this.dataSource.data = updatedText;
+    this.utilsService.openSnackBar('Note Deleted!');
+  }  
 
 
   ngAfterViewInit() {

@@ -2,6 +2,7 @@ export interface IModels {
     title: string;
     action?: () => void;
     navigate?: () => void;
+    show?: boolean;
 }
 
 export interface ISavedText {

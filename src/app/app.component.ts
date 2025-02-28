@@ -1,13 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { pipeline, env } from '@xenova/transformers';
-import { take } from 'rxjs';
 import { IModels } from 'src/interfaces/models.interface';
-import { ModelService } from 'src/services/model.service';
-import { DialogAnimationsComponent } from './dialog-animations/dialog-animations.component';
-import { MatDialog } from '@angular/material/dialog';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { DialogQuestionsComponent } from './dialog-questions/dialog-questions.component';
 import { Router } from '@angular/router';
+import { UtilsService } from 'src/services/utils.service';
 export enum Modes {
   imageToText = 'imageToText',
   resume = 'resume',
@@ -35,7 +30,10 @@ export class AppComponent {
   @ViewChild('imageContainer', { static: false }) imageContainer!: ElementRef;
   title = 'InstaRead';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private utilsService : UtilsService
+  ) {}
   
   //Image to text.
   imagePath = 'assets/example.jpg';
@@ -44,16 +42,20 @@ export class AppComponent {
   footers: IModels[] = [
     {
       title: '🤖 AI Tools',
-      navigate: () => this.router.navigate(['/'])
+      navigate: () => this.router.navigate(['/']),
+      show: true
     },
     {
       title: '📚 Notes',
-      navigate: () => this.router.navigate(['/notes'])
+      navigate: () => this.router.navigate(['/notes']),
+      show: true
     },
-    {
-      title: '🪪 Profile',
-      navigate: () => this.router.navigate(['/profile'])
-    }
+    // Premium for next version
+    // {
+    //   title: '🪪 Profile',
+    //   navigate: () => this.router.navigate(['/profile']),
+    //   show: this.utilsService.isPremium
+    // }
   ];
 
   backDashboard() {

@@ -29,6 +29,12 @@
           <div class="example-element-description">
             {{ element.content }}
             <!-- <span class="example-element-description-attribution"> -- Entire Text </span> -->
+            <button
+            style="margin-top: 10px"
+            mat-raised-button color="accent"
+            (click)="deleteNote(element)">
+            ⌫ Delete
+        </button>
           </div>
         </div>
       </td>
@@ -42,8 +48,10 @@
     </tr>
     <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
   </table>
-
   <div *ngIf="dataSource.data.length > 10">
-    <mat-paginator [pageSizeOptions]="[10, 25, 100]" aria-label="Select page of notes"></mat-paginator>
+    <mat-paginator
+      [pageSizeOptions]="[10, 25, 100]"
+      aria-label="Select page of notes">
+    </mat-paginator>
   </div>
 </div>
